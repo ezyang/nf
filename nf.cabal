@@ -1,5 +1,5 @@
 name:                nf
-version:             1.0.0.3
+version:             1.0.1.0
 synopsis:            NF data type to statically enforce normal form 
 description:         This package provides a data type NF representing
                      data which has been evaluated to normal form.  This

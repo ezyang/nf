@@ -1,4 +1,5 @@
 {-# LANGUAGE CPP #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 #if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
 #endif
@@ -19,6 +20,7 @@
 module Data.NF.Internal(NF(..)) where
 
 import Control.DeepSeq
+import Data.Typeable
 
 -- | 'NF' is an abstract data type representing data which has been
 -- evaluated to normal form.  Specifically, if a value of type @'NF' a@
@@ -29,6 +31,7 @@ newtype NF a
     -- | For @'UnsafeNF' x@ to preserve the 'NF' invariant, you must
     -- show that @'UnsafeNF' x == 'deepseq' x ('UnsafeNF' x)@.
     = UnsafeNF a
+    deriving (Eq, Ord, Typeable)
 
 instance NFData (NF a) where
     rnf x = x `seq` ()
