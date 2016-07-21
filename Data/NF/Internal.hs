@@ -3,6 +3,10 @@
 #if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
 #endif
+#if __GLASGOW_HASKELL__ >= 708
+{-# LANGUAGE RoleAnnotations #-}
+#endif
+
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.NF.Internal
@@ -32,6 +36,20 @@ newtype NF a
     -- show that @'UnsafeNF' x == 'deepseq' x ('UnsafeNF' x)@.
     = UnsafeNF a
     deriving (Eq, Ord, Typeable)
+
+#if __GLASGOW_HASKELL__ >= 708
+-- Suppose we have
+--
+-- data T = ...
+-- newtype U = U T
+-- instance NFData T where ...
+-- instance NFData U where ... something different ...
+--
+-- If we let GHC infer a representational role for NF's parameter,
+-- then someone could coerce from NF T (which is presumed to be in
+-- T-normal form) to NF U (which is expected to be in U-normal form).
+type role NF nominal
+#endif
 
 instance NFData (NF a) where
     rnf x = x `seq` ()
