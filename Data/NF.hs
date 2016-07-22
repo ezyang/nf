@@ -2,6 +2,9 @@
 #if __GLASGOW_HASKELL__ >= 704
 {-# LANGUAGE Safe #-}
 #endif
+#if __GLASGOW_HASKELL__ >= 710
+{-# LANGUAGE PatternSynonyms #-}
+#endif
 -----------------------------------------------------------------------------
 -- |
 -- Module      :  Data.NF
@@ -33,7 +36,14 @@
 -- You should also consider providing APIs which only accept 'NF'
 -- values, to prevent users from accidentally 'deepseq'ing.
 module Data.NF (
+#if __GLASGOW_HASKELL__ >= 800
+    NF(NF),
+#else
     NF,
+#if __GLASGOW_HASKELL__ >= 710
+    pattern NF,
+#endif
+#endif
     makeNF, getNF,
   ) where
 
@@ -42,7 +52,7 @@ import Data.NF.Internal
 
 -- | Creates a value of type 'NF'.  The first time the result is
 -- evaluated to whnf, the value will be 'rnf'ed.  To avoid this
--- 'rnf', see 'UnsafeNF'.
+-- 'rnf', see "Data.NF.Unsafe".
 makeNF :: NFData a => a -> NF a
 makeNF x = x `deepseq` UnsafeNF x
 

@@ -21,9 +21,7 @@ source-repository head
   location:         https://github.com/ezyang/nf.git
 
 library
-  exposed-modules:     Data.NF, Data.NF.Internal
-  if impl(ghc >= 7.8)
-    exposed-modules:   Data.NF.Coercion
+  exposed-modules:     Data.NF, Data.NF.Internal, Data.NF.Unsafe
   build-depends:       base >= 2 && < 5, deepseq >= 1.1
   default-language:    Haskell2010
   other-extensions:    CPP, DeriveDataTypeable
