@@ -14,6 +14,11 @@ maintainer:          ezyang@cs.stanford.edu
 category:            Data
 build-type:          Simple
 cabal-version:       >=1.10
+Tested-With:         GHC == 7.0.1, GHC == 7.0.4, GHC == 7.4.2, GHC == 7.6.3, GHC == 7.8.4, GHC == 7.10.3, GHC == 8.0.1, GHC == 8.1.*
+
+source-repository head
+  type:             git
+  location:         https://github.com/ezyang/nf.git
 
 library
   exposed-modules:     Data.NF, Data.NF.Internal
