@@ -6,6 +6,10 @@
 #if __GLASGOW_HASKELL__ >= 708
 {-# LANGUAGE RoleAnnotations #-}
 #endif
+#if __GLASGOW_HASKELL__ >= 710
+{-# LANGUAGE PatternSynonyms #-}
+{-# LANGUAGE ViewPatterns #-}
+#endif
 
 -----------------------------------------------------------------------------
 -- |
@@ -17,11 +21,21 @@
 -- Stability   :  experimental
 -- Portability :  portable
 --
--- This module provides the constructor for the type 'NF', allowing
--- you to create values of type 'NF' without any runtime overhead
--- if you fulfill a proof obligation that the value is already in
--- normal form.
-module Data.NF.Internal(NF(..)) where
+-- This module is intended for internal use. Unlike "Data.NF.Unsafe",
+-- this module exports the true constructor for 'NF', globally revealing
+-- coerceability between @a@ and @'NF' a@, etc., in the importing module.
+-- This is usually overkill, and makes it harder to avoid accidentally
+-- performing invalid coercions.
+module Data.NF.Internal(
+#if __GLASGOW_HASKELL__ >= 800
+  NF(..,NF)
+#else
+  NF(..)
+#if __GLASGOW_HASKELL__ >= 710
+  , pattern NF
+#endif
+#endif
+) where
 
 import Control.DeepSeq
 import Data.Typeable
@@ -49,6 +63,30 @@ newtype NF a
 -- then someone could coerce from NF T (which is presumed to be in
 -- T-normal form) to NF U (which is expected to be in U-normal form).
 type role NF nominal
+#endif
+
+-- UGH! GHC swapped the constraint order between
+-- 7.10 and 8.0. If anyone's using some beta compiler in between,
+-- it might throw up.
+--
+-- Very unfortunately, GHC (as of 8.0) does not allow the pattern
+-- synonym to be *matched* without an NFData context. Hopefully
+-- this will be fixed eventually.
+
+#if __GLASGOW_HASKELL__ >= 710
+-- | Pattern synonym for the 'NF' type. Applying this synonym
+-- is equivalent to calling 'Data.NF.makeNF'; matching on it
+-- is equivalent to calling 'Data.NF.getNF'.
+#endif
+#if __GLASGOW_HASKELL__ == 710
+pattern NF :: () => NFData a => a -> NF a
+#elif __GLASGOW_HASKELL__ >= 800
+pattern NF :: NFData a => a -> NF a
+#endif
+
+#if __GLASGOW_HASKELL__ >= 710
+pattern NF a <- UnsafeNF a where
+  NF a = a `deepseq` UnsafeNF a
 #endif
 
 instance NFData (NF a) where
