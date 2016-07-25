@@ -23,7 +23,7 @@
 --
 -- This module is intended for internal use. Unlike "Data.NF.Unsafe",
 -- this module exports the true constructor for 'NF', globally revealing
--- coerceability between @a@ and @'NF' a@, etc., in the importing module.
+-- coercibility between @a@ and @'NF' a@, etc., in the importing module.
 -- This is usually overkill, and makes it harder to avoid accidentally
 -- performing invalid coercions.
 module Data.NF.Internal(
